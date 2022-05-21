@@ -89,14 +89,7 @@ void Employee::Print(ostream& stream)
 }
 void Employee::Add()
 {
-	cout << "Enter Name:  " << endl;
-	cin.getline(Name, 30);
-	cout << "Enter National_ID:  " << endl;
-	cin.getline(National_ID, 13);
-	cout << "Enter PhoneNumber:  " << endl;
-	cin.getline(PhoneNumber, 11);
-	cout << "Enter id:  " << endl;
-	cin >> id;
+	
 
 }
 
