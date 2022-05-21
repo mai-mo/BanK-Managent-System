@@ -39,7 +39,18 @@ void Employee::setPhone() {
 
 void Employee::add_employee()
 {
-
+	//mai
+	setID();
+	setName();
+	setNationalID();
+	setPhone();
+	
+	fstream myfile;
+	myfile.open("Employee.txt", ios::out);
+	VariableLengthRecord& record();
+	//int index, char szType, char delimite
+	InitRecord(record);
+	Pack(record);
 }
 
 void Employee::delete_employee()
