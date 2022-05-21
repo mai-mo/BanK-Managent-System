@@ -10,7 +10,7 @@ class Employee
 public:
 	// fields
 	short	id;
-	char	Name[11];
+	char	Name[30];
 	char National_ID[13];
 	char PhoneNumber[11];
 
@@ -27,7 +27,12 @@ public:
 
 	void Print(ostream&);
 
-	void Add();
+	void Add(fstream& f, VariableLengthRecord outRecord);
+
+	void add_available(fstream& f, VariableLengthRecord outRecord);
+
+	void Delete(short rrn, fstream& f);
+
 
 };
 
@@ -87,9 +92,73 @@ void Employee::Print(ostream& stream)
 		<< "\tPhoneNumber '" << PhoneNumber << "'\n"
 		<< "\tId '" << id << "'\n";
 }
-void Employee::Add()
-{
-	
+void Employee::Add(fstream& f, VariableLengthRecord outRecord)
 
+{
+	short header;
+	f.seekg(0, ios::beg);
+	f.read((char*)&header, sizeof(header));
+
+	if (header == -1)
+	{
+		f.seekp(0, ios::end);
+		cout << "Enter Name:  " << endl;
+		cin.getline(Name, 30);
+		cout << "Enter National_ID:  " << endl;
+		cin.getline(National_ID, 13);
+		cout << "Enter PhoneNumber:  " << endl;
+		cin.getline(PhoneNumber, 11);
+		cout << "Enter id:  " << endl;
+		cin >> id;
+
+		Pack(outRecord);
+		outRecord.Write(f);
+	}
+	else
+		add_available(f, outRecord);
 }
+void Employee::Delete(short rrn, fstream& f)
+{
+	short header;
+	int recordSize = 2 + strlen(National_ID) + strlen(Name) + strlen(PhoneNumber) + 3;
+	f.seekg(0, ios::beg);
+	f.read((char*)&header, sizeof(header));
+
+	f.seekp(2 + (rrn - 1) * recordSize, ios::beg);
+	f.put('*');
+	f.write((char*)&header, sizeof(header));
+
+	f.seekp(0, ios::beg);
+	f.write((char*)&rrn, sizeof(rrn));
+}
+void Employee::add_available(fstream& f, VariableLengthRecord outRecord)
+{
+	short header, next_del;
+	char del_flag;
+	int recordSize = 2 + strlen(National_ID) + strlen(Name) + strlen(PhoneNumber) + 3;
+
+	f.seekg(0, ios::beg);
+	f.read((char*)&header, sizeof(header));
+
+	f.seekg(2 + (header - 1) * recordSize, ios::beg);
+	f.get(del_flag);
+	f.read((char*)&next_del, sizeof(next_del));
+
+	f.seekp(0, ios::end);
+	cout << "Enter Name:  " << endl;
+	cin.getline(Name, 30);
+	cout << "Enter National_ID:  " << endl;
+	cin.getline(National_ID, 13);
+	cout << "Enter PhoneNumber:  " << endl;
+	cin.getline(PhoneNumber, 11);
+	cout << "Enter id:  " << endl;
+	cin >> id;
+
+	Pack(outRecord);
+	outRecord.Write(f);
+
+	f.seekp(0, ios::beg);
+	f.write((char*)&next_del, sizeof(next_del));
+}
+
 
