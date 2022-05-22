@@ -58,9 +58,60 @@ void Employee::delete_employee()
 
 }
 
-void Employee::edit_employee(int)
+void Employee::update_employee()
 {
-
+	
+	VariableLengthRecord& record;
+	string name;
+	short choose;
+	ifstream myfile;
+	myfile.open("Employee.txt", ios::out || ios::in || ios::binary);
+	if (search_employeeID()) {
+		
+		cout << "Enter 1 for update id" << endl << "2 for update Name" << endl << "3 for update national id" << endl << "4 for update phone Number" << endl;
+		cin >> choose;
+		switch (choose) {
+		case 1:
+			myfile.seekp(-2, ios::cur);
+			setID();
+			record.Pack(0, id, 2);
+			myfile.seekp(-2, ios::cur);
+			record.Write(myfile);
+			break;
+		case 2:
+			cout << "name: \n";
+			cin >> name;
+			
+			myfile.getline(Name, '|');
+			if (strlen(name) > strlen(Name)) {
+				record.Pack(1, Name, sizeof(Name));
+				Pack(record);
+				myfile.write(0, ios::end);
+				record.Write(myfile);
+			}
+			break;
+		case 3:
+			setNationalID();
+			record.Pack(2, national_ID, 14);
+			myfile.seekp(2, ios::cur);
+			myfile.getline(Name, '|');
+			myfile.seekp(-((sizeof(Name))+2), ios::cur);
+			record.Write(myfile);
+			break;
+		case 4:
+			setPhone();
+			record.Pack(3, phone, 11);
+			myfile.seekp(2, ios::cur);
+			myfile.getline(Name, '|');
+			myfile.seekp(-((sizeof(Name)) + 2 + 14), ios::cur);
+			record.Write(myfile);
+			break;
+		}
+	}
+	else {
+		cout << "Non exist";
+		return;
+	}
 }
 
 void Employee::search_employee()
