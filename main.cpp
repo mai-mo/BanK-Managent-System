@@ -33,11 +33,9 @@ int main()
 
 		cout<<"\n\n Select One Option Below : "<<endl;
 		cout<<"1.Add a New Record "<<endl;
-		cout<<"2.Deposit With Draw "<<endl;
-		cout<<"3.Show a Record "<<endl;
-		cout<<"4.Delete a Record "<<endl;
-		cout<<"5.Search For a Record "<<endl;
-		cout<<"6.Update a Record "<<endl<<endl;
+		cout<<"3.Delete a Record "<<endl;
+		cout<<"4.Search For a Record "<<endl;
+		cout<<"5.Update a Record "<<endl<<endl;
 		cout<<"Please, Enter Your Choice : ";
 		cin>>Y;
 		cout<<endl<<endl;
@@ -48,32 +46,19 @@ int main()
 		{
 
 		case 1:
-			customer.create_account(File);
+			customer Add(File, outRecord);
 			break;
 
 		case 2:
-			
-			int NUM;
-			cout<<"please, Enter Your Account Number :";
-			cin>>NUM;
-
-			customer.deposit_withdraw(NUM);
+			customer.Delete(File,RRN);
 			break;
 
 		case 3:
-			customer.show_account(File);
+			customer.search_customerID(File,outRecord);
 			break;
 
 		case 4:
-			customer.Delete();
-			break;
-
-		case 5:
-			customer.Search();
-			break;
-
-		case 6:
-			customer.Update();
+			customer.update_customer(File,outRecord);
 			break;
 
 			default :
@@ -96,7 +81,6 @@ int main()
 		cout<<"2.Delete an Employee "<<endl;
 		cout<<"3.Update an Employee "<<endl;
 		cout<<"4.Search For an Employee "<<endl;
-		cout<<"5.Display All "<<endl<<endl;
 		cout<<"please, Enter Your Choice : ";
 		cin>>Y;
 		cout<<endl<<endl;
@@ -124,10 +108,6 @@ int main()
 
 		case 4:
 			employee.search_employee(File);
-			break;
-
-		case 5:
-			employee.display_all();
 			break;
 
 			default :
