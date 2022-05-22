@@ -74,12 +74,8 @@ S:
 	cout << "\aPlease Enter The ID To Search About The Employee \n";
 	cin >> searched_id;
 	if (myfile.is_open()) {
-		myfile.ReadHeader(myfile);
-		if (myfile.fail());
-		cout << "ERROR!";
-	}
-	else {
 		do {
+			myfile.ReadHeader(myfile);
 			myfile.getline(id, 2);
 			if (id == searched_id) {
 				cin.ignore();
@@ -101,6 +97,10 @@ S:
 			}
 
 		} while (!myfile.eof());
+		
+	}
+	else {
+		cout << "ERROR!";
 	}
 	
 	
@@ -111,12 +111,11 @@ S:
 			cout << "Are you want to search again ? if yes Enter y else Enter n\n";
 		} while (decision != 'y' && decision != 'n');
 		cin >> decision;
-		if (decision == 'y')
+		if (decision == 'y'||decision == 'Y')
 			goto S;
 		else
 			return;
 	}
-
 }
 
 
