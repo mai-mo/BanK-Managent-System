@@ -1,8 +1,9 @@
+#include <iostream>
 #include <string.h>
 #include "Employee.h"
 #include <fstream>
-
-
+#include "varlen.h"
+using namespace std;
 
 
 Employee::Employee()
@@ -22,7 +23,7 @@ void Employee::setID() {
 void Employee::setName()
 {
 	cout << "Name: \n";
-	cin >> Name;
+	cin.getline(Name, 20);
 }
 
 void Employee::setNationalID() {
@@ -39,6 +40,7 @@ void Employee::setPhone() {
 
 void Employee::add_employee()
 {
+	
 	//mai
 	setID();
 	setName();
@@ -46,24 +48,23 @@ void Employee::add_employee()
 	setPhone();
 	
 	fstream myfile;
-	myfile.open("Employee.txt", ios::out);
-	VariableLengthRecord& record();
+	myfile.open("Employee.txt", ios::out||ios::binary);
+	VariableLengthRecord record;
 	//int index, char szType, char delimite
 	InitRecord(record);
 	Pack(record);
+	record.Write(myfile);
+	
 }
 
 void Employee::delete_employee()
 {
-
 }
 
 void Employee::update_employee()
 {
-	
 	VariableLengthRecord record;
 	ifstream myfile;
-	int headerSize;
 	myfile.open("Employee.txt", ios::out || ios::in || ios::binary);
 	if (search_employeeID()) {
 
@@ -80,7 +81,7 @@ void Employee::update_employee()
 	}
 }
 
-void Employee::search_employee()
+bool Employee::search_employeeID()
 {
 	VariableLengthRecord record;
 	ifstream myfile;
@@ -92,7 +93,7 @@ S:
 	cin >> searched_id;
 	if (myfile.is_open()) {
 		do {record.ReadHeader(myfile);
-			myfile.getline(id, 2);
+		myfile.read((char*)&id, 2);
 			if (id == searched_id) {
 				myfile.getline(Name, '|');
 				myfile.getline(national_ID, 14);
@@ -122,7 +123,11 @@ S:
 			goto S;
 		else
 			return false;
-}
+	}
+
+	
+
+
 
 
 // initialize a VariableLengthRecord to be used for Employees
@@ -140,7 +145,7 @@ int Employee::Pack(VariableLengthRecord& record)
 {
 	// pack the fields into a VariableLengthRecord, return  ( 1 )TRUE if all succeed, FALSE o/w
 	int result, recordSize = 0;   // Lenght Indicator  id(short) = 120 , name = AMES , Delimiter = 1 = > 7
-	// 2 -> first field
+	// 4 -> first field
 	recordSize = 2 + strlen(Name) + 1 + 14 + 11;
 
 	record.Clear(recordSize);
@@ -159,15 +164,29 @@ int Employee::Pack(VariableLengthRecord& record)
 int Employee::Unpack(VariableLengthRecord& record)
 {
 	int result; 
-	result = record.Unpack(0, (char*)&id) && record.Unpack(1, Name, true) && record.Unpack(2, national_ID, true)&& record.Unpack(3, phone, true);
+	result = record.Unpack(0, (char*)&id)
+		&& record.Unpack(1,(char*) Name, true)
+		&& record.Unpack(2, national_ID, true)
+			&& record.Unpack(3, phone, true);
 	return result;
 }
 
-void Employee::Print(ostream& stream)
+void Employee::PrintAll(ostream& stream)
 {
-	stream << "Person:"
-		<< "\tId: " << id << "'\n"
-		<< "\tName: " << Name << "'\n"
-		<< "\tnational_ID: " << national_ID << "'\n"
-		<< "\tphone: " << phone <<"'\n";
+	VariableLengthRecord record;
+	ifstream myfile;
+	myfile.open("Employee.txt", ios::in);
+	if (myfile.is_open())
+	{
+		while (!myfile.eof()) {
+			record.Read(myfile);
+			Unpack(record);
+			stream << "Person:"
+				<< "\tId: " << id << "'\n"
+				<< "\tName: " << Name << "'\n"
+				<< "\tnational_ID: " << national_ID << "'\n"
+				<< "\tphone: " << phone << "'\n";
+			myfile.close();
+		}
+	}
 }
