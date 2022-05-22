@@ -65,7 +65,55 @@ void Employee::edit_employee(int)
 
 void Employee::search_employee()
 {
+	ifstream myfile;
+	myfile.open("Employee.txt", ios::in||ios::binary);
+S:
+	char decision;
+	int i = 1;
+	short searched_id;
+	cout << "\aPlease Enter The ID To Search About The Employee \n";
+	cin >> searched_id;
+	if (myfile.is_open()) {
+		myfile.ReadHeader(myfile);
+		if (myfile.fail())a
+			cout << "ERROR!";
+		else
+		do {
+			myfile >> id;
+			if (id == searched_id) {
+				cin.ignore();
+				myfile.getline(Name,'|');
+				myfile.getline(national_ID, 14);
+				myfile.getline(phone, 11);
+			cout << "\aWe Have Found The account \n"
+				<< "Name: " << Name << endl
+				<< "ID : " << id << endl
+				<< "National_id: " << national_ID << endl
+				<< "Phone: " << phone;
+				i = 0;
+				break;
+			}
+			else
+			{
+			myfile.seekg(sizeof(Name) + 14 + 11);
+			}
+					
+		} while (!myfile.eof());
+	}
 	
+	if (i) 
+	{
+		cout << "\aYou don't have any contacts yet \n";
+		do {
+			cout << "Are you want to search again ? if yes Enter y else Enter n\n";
+		} while (decision != 'y' && decision != 'n');
+		cin >> decision;
+		if (decision == 'y')
+			goto S;
+		else
+			return;
+	}
+
 
 }
 
