@@ -35,9 +35,9 @@ public:
 
 	void add_available(fstream& f, VariableLengthRecord outRecord);
 
-	void Delete(short rrn, fstream& f);
-	void update_customer();
-	bool search_customerID();
+	void Delete(fstream& f,short rrn );
+	void update_customer(fstream myfile,VariableLengthRecord record);
+	bool search_customerID(fstream myfile,VariableLengthRecord record);
 
 };
 
@@ -131,22 +131,22 @@ void customer::Add(fstream& f, VariableLengthRecord outRecord)
 		cin.getline(accnum, 13);
 		cout << "Enter PhoneNumber:  " << endl;
 		cin.getline(PhoneNumber, 11);
-		cout << "Enter id:  " << endl;
-		cin >> id;
 		cout << "Enter balance" << endl;
 		cin.getline(balance, 10);
 		cout << "Enter password" << endl;
 		cin.getline(password, 5);
 		cout << "operation_type" << endl;
 		cin.getline(operation_tybe, 2);
-
+                cout << "Enter id:  " << endl;
+		cin >> id;
 		Pack(outRecord);
 		outRecord.Write(f);
 	}
 	else
 		add_available(f, outRecord);
+	f.close()
 }
-void customer::Delete(short rrn, fstream& f)
+void customer::Delete(fstream& f,short rrn )
 {
 	short header;
 	int recordSize = 2 + strlen(Name) + 13 + 10 + 5 + 11 + 2 + 1;
@@ -159,6 +159,7 @@ void customer::Delete(short rrn, fstream& f)
 
 	f.seekp(0, ios::beg);
 	f.write((char*)&rrn, sizeof(rrn));
+	f.close();
 }
 void customer::add_available(fstream& f, VariableLengthRecord outRecord)
 {
@@ -194,12 +195,11 @@ void customer::add_available(fstream& f, VariableLengthRecord outRecord)
 
 	f.seekp(0, ios::beg);
 	f.write((char*)&next_del, sizeof(next_del));
+	f.close();
 }
-void customer::update_customer()
+void customer::update_customer(fstream myfile,VariableLengthRecord record)
 {
-	VariableLengthRecord record;
-	ifstream myfile;
-	myfile.open("Employee.txt", ios::out || ios::in || ios::binary);
+	
 	if (search_customerID()) {
 
 		cout << "Enter Name:  " << endl;
@@ -208,14 +208,14 @@ void customer::update_customer()
 		cin.getline(accnum, 13);
 		cout << "Enter PhoneNumber:  " << endl;
 		cin.getline(PhoneNumber, 11);
-		cout << "Enter id:  " << endl;
-		cin >> id;
 		cout << "Enter balance" << endl;
 		cin.getline(balance, 10);
 		cout << "Enter password" << endl;
 		cin.getline(password, 5);
 		cout << "operation_type" << endl;
 		cin.getline(operation_tybe, 2);
+		cout << "Enter id:  " << endl;
+		cin >> id;
 
 		Pack(record);
 		record.Write(myfile);
@@ -224,12 +224,11 @@ void customer::update_customer()
 		cout << "Non exist";
 		return;
 	}
+	myfile.close();
 }
 
-bool customer::search_customerID()
+bool customer::search_customerID(fstream myfile,VariableLengthRecord record)
 {
-	VariableLengthRecord record;
-	ifstream myfile;
 	myfile.open("customer.txt", ios::in || ios::binary);
 S:
 	char decision;
@@ -278,4 +277,5 @@ S:
 		goto S;
 	else
 		return false;
+	myfile.close();
 }
