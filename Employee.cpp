@@ -144,7 +144,7 @@ S:
 			else
 			{
 				myfile.getline(Name, '|');
-				myfile.seekg(14 + 11);
+				myfile.seekg(sizeof(Name)+14 + 11);
 			}
 
 		} while (!myfile.eof());
