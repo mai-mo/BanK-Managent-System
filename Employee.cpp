@@ -61,52 +61,18 @@ void Employee::delete_employee()
 void Employee::update_employee()
 {
 	
-	VariableLengthRecord& record;
-	string name;
-	short choose;
+	VariableLengthRecord record;
 	ifstream myfile;
+	int headerSize;
 	myfile.open("Employee.txt", ios::out || ios::in || ios::binary);
 	if (search_employeeID()) {
-		
-		cout << "Enter 1 for update id" << endl << "2 for update Name" << endl << "3 for update national id" << endl << "4 for update phone Number" << endl;
-		cin >> choose;
-		switch (choose) {
-		case 1:
-			myfile.seekp(-2, ios::cur);
-			setID();
-			record.Pack(0, id, 2);
-			myfile.seekp(-2, ios::cur);
-			record.Write(myfile);
-			break;
-		case 2:
-			cout << "name: \n";
-			cin >> name;
-			
-			myfile.getline(Name, '|');
-			if (strlen(name) > strlen(Name)) {
-				record.Pack(1, Name, sizeof(Name));
-				Pack(record);
-				myfile.write(0, ios::end);
-				record.Write(myfile);
-			}
-			break;
-		case 3:
-			setNationalID();
-			record.Pack(2, national_ID, 14);
-			myfile.seekp(2, ios::cur);
-			myfile.getline(Name, '|');
-			myfile.seekp(-((sizeof(Name))+2), ios::cur);
-			record.Write(myfile);
-			break;
-		case 4:
-			setPhone();
-			record.Pack(3, phone, 11);
-			myfile.seekp(2, ios::cur);
-			myfile.getline(Name, '|');
-			myfile.seekp(-((sizeof(Name)) + 2 + 14), ios::cur);
-			record.Write(myfile);
-			break;
-		}
+
+		setID();
+		setName();
+		setNationalID();
+		setPhone();
+		Pack(record);
+		record.Write(myfile);	
 	}
 	else {
 		cout << "Non exist";
@@ -116,47 +82,37 @@ void Employee::update_employee()
 
 void Employee::search_employee()
 {
+	VariableLengthRecord record;
 	ifstream myfile;
 	myfile.open("Employee.txt", ios::in||ios::binary);
 S:
 	char decision;
-	int i = 1;
 	short searched_id;
 	cout << "\aPlease Enter The ID To Search About The Employee \n";
 	cin >> searched_id;
 	if (myfile.is_open()) {
-		do {
-			myfile.ReadHeader(myfile);
+		do {record.ReadHeader(myfile);
 			myfile.getline(id, 2);
 			if (id == searched_id) {
-				cin.ignore();
 				myfile.getline(Name, '|');
 				myfile.getline(national_ID, 14);
 				myfile.getline(phone, 11);
-				cout << "\aWe Have Found The account \n"
+				cout << "\aWe Have Found The Employee Data \n"
 					<< "Name: " << Name << endl
 					<< "ID : " << id << endl
 					<< "National_id: " << national_ID << endl
-					<< "Phone: " << phone;
-				i = 0;
-				break;
+					<< "Phone: " << phone; return true;
 			}
 			else
-			{
-				myfile.getline(Name, '|');
-				myfile.seekg(sizeof(Name)+14 + 11);
-			}
-
-		} while (!myfile.eof());
+			{myfile.getline(Name, '|');
+				myfile.seekg((sizeof(Name)) +14 + 11);
+			}} while (!myfile.eof());
+		
 		
 	}
 	else {
 		cout << "ERROR!";
 	}
-	
-	
-	if (i) 
-	{
 		cout << "\aYou don't have any contacts yet \n";
 		do {
 			cout << "Are you want to search again ? if yes Enter y else Enter n\n";
@@ -165,8 +121,7 @@ S:
 		if (decision == 'y'||decision == 'Y')
 			goto S;
 		else
-			return;
-	}
+			return false;
 }
 
 
