@@ -84,6 +84,7 @@ void Employee::add_employee(fstream& f, VariableLengthRecord outRecord)
 	}
 	else
 		add_available(f, outRecord);
+	f.close();
 
 }
 
@@ -100,6 +101,7 @@ void Employee::Delete(fstream& f, short rrn)
 
 	f.seekp(0, ios::beg);
 	f.write((char*)&rrn, sizeof(rrn));
+	f.close();
 }
 void Employee::add_available(fstream& f, VariableLengthRecord outRecord)
 {
@@ -129,6 +131,7 @@ void Employee::add_available(fstream& f, VariableLengthRecord outRecord)
 
 	f.seekp(0, ios::beg);
 	f.write((char*)&next_del, sizeof(next_del));
+	f.close();
 }
 void Employee::update_employee(fstream& myfile)
 {
@@ -148,6 +151,7 @@ void Employee::update_employee(fstream& myfile)
 		cout << "Non exist";
 		return;
 	}
+	myfile.close();
 }
 bool Employee::search_employee(fstream& myfile)
 {
@@ -203,6 +207,7 @@ S:
 		else
 			return false;
 	}
+	myfile.close();
 }
 // initialize a VariableLengthRecord to be used for Employees
 void Employee::InitRecord(VariableLengthRecord& record)
@@ -246,4 +251,5 @@ void Employee::Print(ostream& stream)
 		<< "\tName: " << Name << "'\n"
 		<< "\tnational_ID: " << National_ID << "'\n"
 		<< "\tphone: " << PhoneNumber << "'\n";
+	
 }
