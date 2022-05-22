@@ -75,31 +75,34 @@ S:
 	cin >> searched_id;
 	if (myfile.is_open()) {
 		myfile.ReadHeader(myfile);
-		if (myfile.fail())a
-			cout << "ERROR!";
-		else
+		if (myfile.fail());
+		cout << "ERROR!";
+	}
+	else {
 		do {
-			myfile >> id;
+			myfile.getline(id, 2);
 			if (id == searched_id) {
 				cin.ignore();
-				myfile.getline(Name,'|');
+				myfile.getline(Name, '|');
 				myfile.getline(national_ID, 14);
 				myfile.getline(phone, 11);
-			cout << "\aWe Have Found The account \n"
-				<< "Name: " << Name << endl
-				<< "ID : " << id << endl
-				<< "National_id: " << national_ID << endl
-				<< "Phone: " << phone;
+				cout << "\aWe Have Found The account \n"
+					<< "Name: " << Name << endl
+					<< "ID : " << id << endl
+					<< "National_id: " << national_ID << endl
+					<< "Phone: " << phone;
 				i = 0;
 				break;
 			}
 			else
 			{
-			myfile.seekg(sizeof(Name) + 14 + 11);
+				myfile.getline(Name, '|');
+				myfile.seekg(14 + 11);
 			}
-					
+
 		} while (!myfile.eof());
 	}
+	
 	
 	if (i) 
 	{
@@ -113,7 +116,6 @@ S:
 		else
 			return;
 	}
-
 
 }
 
