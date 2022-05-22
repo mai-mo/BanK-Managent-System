@@ -38,7 +38,7 @@ public:
 	void add_employee();
 	//hager
 	void delete_employee();
-	void edit_employee(int);
+	void update_employee();
 	void search_employee();
 	void display_all();
 };
