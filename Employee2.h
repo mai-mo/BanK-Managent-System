@@ -1,8 +1,10 @@
 #include <iostream>
+#include<fstream>
+#include<string>
 //#include "fixtext.h"
 //#include "lentext.h"
 #include "varlen.h"
-#include <string.h>
+
 using namespace std;
 class Employee
 {
@@ -30,7 +32,7 @@ public:
 	void add_employee(fstream& f, VariableLengthRecord outRecor);
 	void add_available(fstream& f, VariableLengthRecord outRecord);
 
-	void Delete(fstream& f,short rrn);
+	void Delete(fstream& f, short rrn);
 
 	void update_employee(fstream& myfile);
 	bool search_employee(fstream& myfile);
@@ -85,7 +87,7 @@ void Employee::add_employee(fstream& f, VariableLengthRecord outRecord)
 
 }
 
-void Employee::Delete( fstream& f,short rrn)
+void Employee::Delete(fstream& f, short rrn)
 {
 	short header;
 	int recordSize = 2 + strlen(National_ID) + strlen(Name) + strlen(PhoneNumber) + 3;
@@ -98,6 +100,35 @@ void Employee::Delete( fstream& f,short rrn)
 
 	f.seekp(0, ios::beg);
 	f.write((char*)&rrn, sizeof(rrn));
+}
+void Employee::add_available(fstream& f, VariableLengthRecord outRecord)
+{
+	short header, next_del;
+	char del_flag;
+	int recordSize = 2 + strlen(National_ID) + strlen(Name) + strlen(PhoneNumberNumber) + 3;
+
+	f.seekg(0, ios::beg);
+	f.read((char*)&header, sizeof(header));
+
+	f.seekg(2 + (header - 1) * recordSize, ios::beg);
+	f.get(del_flag);
+	f.read((char*)&next_del, sizeof(next_del));
+
+	f.seekp(0, ios::end);
+	cout << "Enter Name:  " << endl;
+	cin.getline(Name, 30);
+	cout << "Enter  National_ID:  " << endl;
+	cin.getline(National_ID, 13);
+	cout << "Enter PhoneNumberNumber:  " << endl;
+	cin.getline(PhoneNumberNumber, 11);
+	cout << "Enter id:  " << endl;
+	cin >> id;
+
+	Pack(outRecord);
+	outRecord.Write(f);
+
+	f.seekp(0, ios::beg);
+	f.write((char*)&next_del, sizeof(next_del));
 }
 void Employee::update_employee(fstream& myfile)
 {
@@ -173,7 +204,7 @@ S:
 			return false;
 	}
 }
- initialize a VariableLengthRecord to be used for Employees
+// initialize a VariableLengthRecord to be used for Employees
 void Employee::InitRecord(VariableLengthRecord& record)
 {
 	record.init(4);
@@ -195,7 +226,7 @@ int Employee::Pack(VariableLengthRecord& record)
 		&& record.Pack(2, (void*)National_ID, strlen(National_ID))
 		&& record.Pack(3, (void*)PhoneNumber, strlen(PhoneNumber));
 
-	
+
 
 	return result;
 }
